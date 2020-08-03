@@ -8,7 +8,8 @@ output:
 
 ## Loading and preprocessing the data
 
-```{r readdata, echo=TRUE}
+
+```r
 #Unzip the file
 unzip(zipfile = "activity.zip")
 
@@ -18,10 +19,30 @@ dat <- read.csv(file = "activity.csv",header = TRUE)
 
 ## What is mean total number of steps taken per day?
 
-```{r calculatesteps, echo=TRUE}
+
+```r
 #Install the dplyr package
 library(dplyr)
+```
 
+```
+## 
+## Attaching package: 'dplyr'
+```
+
+```
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```r
 #Create a data frame with total steps per day
 steps_per_day <- steps_per_day <- dat %>% group_by(date) %>% summarise(total_steps = sum(steps))
 
@@ -29,6 +50,8 @@ steps_per_day <- steps_per_day <- dat %>% group_by(date) %>% summarise(total_ste
 
 hist(steps_per_day$total_steps, main = "Histogram of total steps per day", xlab = "Total steps per day")
 ```
+
+![](PA1_template_files/figure-html/calculatesteps-1.png)<!-- -->
 <br>
 
 ###Calculate the mean and median of the total steps per day
@@ -36,15 +59,25 @@ hist(steps_per_day$total_steps, main = "Histogram of total steps per day", xlab 
 <br>
 
 ### Mean total steps:
-```{r, echo=TRUE}
+
+```r
 mean(steps_per_day$total_steps, na.rm = T)
+```
+
+```
+## [1] 10766.19
 ```
 
 <br>
 
 ### Meadian total steps:
-```{r, echo = TRUE}
+
+```r
 median(steps_per_day$total_steps, na.rm = T)
+```
+
+```
+## [1] 10765
 ```
 
 <br>
@@ -52,8 +85,8 @@ median(steps_per_day$total_steps, na.rm = T)
 
 ## What is the average daily activity pattern?
 
-```{r avgdailypattern, echo=TRUE}
 
+```r
 ##Create a data frame with average steps per by time interval (after removing the NA values)
 
 time_series <- dat %>% group_by(interval) %>% summarise(avg_steps_per_day = mean(steps, na.rm = T))
@@ -61,33 +94,38 @@ time_series <- dat %>% group_by(interval) %>% summarise(avg_steps_per_day = mean
 #Creating the time series plot
 library(lattice)
 xyplot(time_series$avg_steps_per_day ~ time_series$interval, type = "l", main = "Average daily pattern",ylab = "Average steps per day",xlab = "5-minute interval")
+```
 
+![](PA1_template_files/figure-html/avgdailypattern-1.png)<!-- -->
+
+```r
 #Finding the interval that on average across all the days in the dataset, contains the maximum number of steps
 
 max_interval <- time_series$interval[which.max(time_series$avg_steps_per_day)]
-
 ```
 <br>
 
-#### The 5-minute interval, which on average across all the days in the dataset, contains the maximum number of steps is **`r max_interval`**
+#### The 5-minute interval, which on average across all the days in the dataset, contains the maximum number of steps is **835**
 
 <br>
 <br>
 
 ## Inputing missing values
 
-```{r rowswithna, echo= TRUE}
+
+```r
 #Calculating total number of rows with missing values
 
 missing_values <- sum(is.na(dat))
 ```
 <br>
 
-#### There are **`r missing_values`** rows with missing values
+#### There are **2304** rows with missing values
 
 <br>
 
-```{r replacena, echo=TRUE}
+
+```r
 #Creating a loop to replace NA's and creating a new dataset out of it
 
 dat2 <- dat
@@ -106,32 +144,45 @@ steps_per_day_2 <- dat2 %>% group_by(date) %>% summarise(total_steps = sum(steps
 
 hist(steps_per_day_2$total_steps, main = "Histogram of total steps per day", xlab = "Total steps per day")
 ```
+
+![](PA1_template_files/figure-html/replacena-1.png)<!-- -->
 <br>
 ###Calculate the mean and median of the total steps per day
 
 <br>
 
 ### Mean total steps:
-```{r, echo=TRUE}
+
+```r
 mean(steps_per_day_2$total_steps, na.rm = T)
+```
+
+```
+## [1] 10766.19
 ```
 <br>
 
 ### Meadian total steps:
 
-```{r, echo = TRUE}
+
+```r
 median(steps_per_day_2$total_steps, na.rm = T)
+```
+
+```
+## [1] 10766.19
 ```
 <br>
 
-### *"Even though the frequency of the steps per day has increased after replacing the NA values with the mean values, there is no impact on the mean and the median of the total number of steps itself."*
+### *"Even though the frequency of the steps per day has increased after replacing the NA values with the mean values, there is no impact on the mean and the median of the total nbumber of steps itself."*
 
 <br>
 <br>
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{r weekdays, echo=TRUE}
+
+```r
 #Adding a new factor variable to dat2 to differentiate between weekdays and weekends
 
 dat2$date <- as.Date(dat$date)
@@ -148,8 +199,9 @@ time_series_2 <- dat2 %>% group_by(interval, WeekDay) %>% summarise(average_step
 #Creating a panel plot
 library(lattice)
 xyplot(average_steps ~ interval | WeekDay, data = time_series_2, layout = c(1, 2), type = "l", ylab = "Number of steps", xlab = "Interval")
-
 ```
+
+![](PA1_template_files/figure-html/weekdays-1.png)<!-- -->
 <br>
 
 ### Based on the time series analysis, there does not seem to be a major difference of the average number of steps between weekdays and weekends
